@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View,generic
 
+
 # Create your views here.
 
 class HomeView(View):
@@ -8,3 +9,4 @@ class HomeView(View):
     
     def dispatch(self,request,*args,**kwargs):
         return render(request,self.template_name)
+    

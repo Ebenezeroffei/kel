@@ -1,0 +1,73 @@
+{% extends 'user/base.html' %}
+
+
+{% block head %}
+    <title>Sign Up</title>
+    <style>
+        
+        .input-group{
+            border: thin solid #535353;
+            border-radius: 5px;
+        }
+        .wrapper{
+            margin: 15px auto
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="card" style="max-width: 450px; margin:30px auto auto auto">
+        <div class="card-header text-center" style="background: gold;">Sign Up</div>
+        <div class="card-body">
+            <form action="" method="post">
+               {% csrf_token %}
+                <div class="form-group">
+                    {{form.username}}
+                </div>
+                <div class="form-group">
+                    {{form.email}}
+                </div>
+                <div class="form-group">
+                    {{loc.hall_or_hostel}}
+                </div>
+                <div class="form-group">
+                    {{loc.room_number}}
+                </div>
+                <div class="form-group">
+                    {{loc.mobile_number}}
+                    <span class="form-text small muted">{{ loc.mobile_number.help_text }}</span>
+                </div>
+                <div class="form-group">
+                   <span class="form-text small muted">{{ form.password1.error_messages }}</span>
+                    {{form.password1}}
+                    <span class="form-text small muted">
+                        Your password should be at least 8 characters long.
+                    </span>
+                </div>
+                <div class="form-group">
+                    {{form.password2}}
+                    <span class="form-text small muted">{{ form.password2.help_text }}</span>
+
+                </div>
+                <button class="btn btn-block btn-outline-dark" >Create Account</button>
+                <p class="text-center muted small" style="margin: 2px auto">Already Have An Account? <a href="{% url 'user:signin' %}">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        // Add bootstrap classes to the fields
+        $('#id_password1').attr(
+            {
+                'class':'form-control',
+                'placeholder':'Password',
+            }
+        );
+        $('#id_password2').attr(
+            {
+                'class':'form-control',
+                'placeholder':'Password Confirmation',
+            }
+        );
+    </script>
+{% endblock %}

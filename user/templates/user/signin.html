@@ -5,10 +5,13 @@
     <title>Sign In</title>
 {% endblock %}
 {% block content %}
-    <div class="card" style="max-width: 450px;margin: calc((100% - 846px)/2) auto auto auto;border: thin solid gold;">
-        <div class="card-header" style="background: gold">
-            <h3 style="margin: auto" class="text-light text-center lead">Sign in</h3>
-        </div>
+   {% if messages %}
+       {% for message in messages %}
+           <p class="alert alert-success">{{message}}</p>
+       {% endfor %}
+   {% endif %}
+    <div class="card" style="max-width: 450px;margin: 100px auto;">
+        <div class="card-header text-center" style="background: gold">Sign in</div>
         <div class="card-body">
             <form action="." method="post">
                {% csrf_token %}
@@ -20,8 +23,9 @@
                     <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
                     {{ form.password }}
                 </div>
-                <a href="" style="display: block;margin: 2px auto;" class="small muted text-right">Forgot Password</a><br/>
-                <button class="btn btn-success btn-block">Sign In</button>
+                <a href="{% url 'password_reset' %}" style="display: block;margin: 2px auto;" class="small muted text-right">Forgot Password</a><br/>
+                <button class="btn btn-outline-dark btn-block">Sign In</button>
+                <p class="text-center small muted" style="margin: 2px auto;">Need An Account? <a href="{% url 'user:signup' %}">Sign Up</a></p>
             </form>
         </div>
     </div>
@@ -31,6 +35,5 @@
         // Add Bootstrap classes to the input fields
         $('#id_username').attr('class','form-control')
         $('#id_password').attr('class','form-control')
-        console.log(document.getElementsByClassName('card')[0].getBoundingClientRect())
     </script>
 {% endblock %}
