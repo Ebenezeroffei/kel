@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'landing\bootstrap.min.css' %}"/>
     <style>
         nav{
-            background-color: gold;
+            background-color: royalblue;
         }
     </style>
     {% block head %}
@@ -16,24 +16,23 @@
 </head>
 <body>
     <div class="container">
-        <nav class="navbar fixed-top navbar-expand-md navbar-dark">
-          <a class="navbar-brand" href="#"><h5>What's Your Need</h5></a>
+        <nav class="navbar fixed-top navbar-expand-md navbar-dark navbar-outline-dark">
+          <a class="navbar-brand" href="{% url 'landing:home' %}"><h5>What's Your Need</h5></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
           <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+           <!-- Form Section -->
+            <form class="form-inline my-2 my-lg-0" style="width: calc(100% - 250px)">
+              <input class="form-control mr-sm-2 mr-2" type="search" placeholder="Search" style="width: calc(100% - 90px)">
+              <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            <!-- User Section -->
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-              <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">New Poll</a>
-              </li>
-              {% comment %}
                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      User
+                      <img src="{% static 'landing\images\man-user.png' %}"/>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                      {% if user.is_authenticated %}
@@ -47,12 +46,20 @@
                       {% endif %}
                     </div>
                 </li>
-                {% endcomment %}
+                <!-- Basket Section -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#" style = "position: relative">
+                       <span style="position: absolute;left: 18px;top: 2px;" class="badge badge-light" id="basket-items">
+                           {% if user.is_authenticated %}
+                               {{user.usercartitems_set.count}}
+                           {% else %}
+                                0
+                           {% endif %}
+                       </span>
+                        <img src="{% static 'landing\images\shopping-cart.png' %}" alt="">
+                    </a>
+                  </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0" style="width: calc(100% - 250px)">
-              <input class="form-control mr-sm-2 mr-2" type="search" placeholder="Search" style="width: calc(100% - 90px)">
-              <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
-            </form>
           </div>
         </nav>
     </div>
@@ -64,21 +71,20 @@
         let form = $('form');
         let searchBar = $('input[type = "search"]');
         let navBar = $('nav');
-        // Changes the width of the form and input field when it reaches a certin level
+        // Changes the width of the form and input field when it reaches a certain level
         if( window.innerWidth < 767 ){
                 form.css('width','auto');
             }
             else{
-                form.css('width','calc(100% - 250px)');
+                form.css('width','calc(100% - 100px)');
             }
-            console.log(window.innerWidth)
         
         window.onresize = () => {
             if( window.innerWidth < 767 ){
                 form.css('width','auto');
             }
             else{
-                form.css('width','calc(100% - 250px)');
+                form.css('width','calc(100% - 100px)');
             }
 //            console.log(window.innerWidth)
         }

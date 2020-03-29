@@ -3,6 +3,62 @@
 
 {% block head %}
     <title>Home</title>
+    <style>
+        a{
+            display: block;
+            color: #535353;
+        }
+        a:hover{
+            text-decoration: none;
+            color: royalblue;
+        }
+    </style>
 {% endblock %}
 {% block content %}
+    <div class="container" style="margin-top: 80px;">
+        <div class="row row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-2" >
+            {% for good in products %}
+                <div class="col">
+                    <div class="card" style="box-shadow: 0px 2px 5px rgba(0,0,0,0.5);">
+                        <img src="{{ good.product_img.url }}" class="card-img-top" alt="{{ goood.product_name }}">
+                        <hr style = 'margin: auto; width: 100%;'/>
+                        <div style="padding: 8px 5px;">
+                           <a href="{% url 'landing:detail' good.pk %}" class = "lead text-center">{{ good.product_name }}</a>
+                            <span style="font-size: 14px;">GH&#8373; {{ good.product_price }}</span>
+                            {% if user.is_authenticated and good in added_items %}
+                                <button class="btn btn-primary btn-block btn-sm disabled">Added</button>
+                            {% elif user.is_authenticated %}
+                                <button id="{{ good.id }}" class="btn btn-primary btn-block btn-sm add-product">Add to basket</button>
+                            {% else %}
+                                <a href="{% url 'user:signin' %}" class="btn btn-primary btn-block btn-sm">Add to basket</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        // Create a function that adds a product to the user's cart
+        let addProductTocart = () => {
+            $('.add-product').click(function(){
+                let productId = $(this).attr('id');
+                $.ajax({
+                    url: "{% url 'landing:add_to_cart' %}",
+                    data: {
+                        "product_id": productId,
+                    },
+                    dataType: "json",
+                    success: function(data){
+                        $('#basket-items').text(data['total_basket_items']);
+                    }
+                })
+                $(this).text("Added");
+                $(this).attr("class","btn btn-primary btn-block btn-sm disabled");
+            })
+        }
+        addProductTocart(); // Invoke
+    </script>
 {% endblock %}
