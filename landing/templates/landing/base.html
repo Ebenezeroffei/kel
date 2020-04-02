@@ -24,8 +24,8 @@
 
           <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
            <!-- Form Section -->
-            <form class="form-inline my-2 my-lg-0" style="width: calc(100% - 250px)">
-              <input class="form-control mr-sm-2 mr-2" type="search" placeholder="Search" style="width: calc(100% - 90px)">
+            <form action="{% url 'landing:search' %}" class="form-inline my-2 my-lg-0" style="width: calc(100% - 250px)">
+              <input class="form-control mr-sm-2 mr-2" type="search" placeholder="Search for goods.." name="q" style="width: calc(100% - 90px)">
               <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
             </form>
             <!-- User Section -->
@@ -88,6 +88,29 @@
             }
 //            console.log(window.innerWidth)
         }
+        
+        // Create a function that adds a product to the user's cart
+        let addProductTocart = () => {
+            $('.add-product').click(function(){
+                if($(this).text() !== "Added"){
+                    let productId = $(this).attr('id');
+                    $.ajax({
+                        url: "{% url 'landing:add_to_cart' %}",
+                        data: {
+                            "product_id": productId,
+                        },
+                        dataType: "json",
+                        success: function(data){
+                            $('#basket-items').text(data['total_basket_items']);
+                        }
+                    })
+                    $(this).text("Added");
+                    $(this).attr("class","btn btn-primary btn-block btn-sm disabled");
+                }
+            })
+        }
+        addProductTocart(); // Invoke
+    </script>
     </script>
     {% block javascript %}
     {% endblock %}

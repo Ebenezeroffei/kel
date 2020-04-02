@@ -1,0 +1,52 @@
+{% extends 'landing/base.html' %}
+
+
+{% block head%}
+    <title>Search Results</title>
+    <style>
+        a{
+            display: block;
+            color: #535353;
+        }
+        a:hover{
+            text-decoration: none;
+            color: royalblue;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container" style="margin-top: 80px">
+       {% if results %}
+            <div class="row row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-2" >
+                {% for good in results %}
+                    <div class="col">
+                        <div class="card" style="box-shadow: 0px 2px 5px rgba(0,0,0,0.5);">
+                            <img src="{{ good.product_img.url }}" class="card-img-top" alt="{{ goood.product_name }}">
+                            <hr style = 'margin: auto; width: 100%;'/>
+                            <div style="padding: 8px 5px;">
+                               <a href="{% url 'landing:detail' good.pk %}" class = "lead text-center" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" >{{ good.product_name }}</a>
+                                <span style="font-size: 14px;">GH&#8373; {{ good.product_price }}</span>
+                                {% if user.is_authenticated and good in added_items %}
+                                    <button class="btn btn-primary btn-block btn-sm disabled">Added</button>
+                                {% elif user.is_authenticated %}
+                                    <button id="{{ good.id }}" class="btn btn-primary btn-block btn-sm add-product">Add to basket</button>
+                                {% else %}
+                                    <a href="{% url 'user:signin' %}" class="btn btn-primary btn-block btn-sm">Add to basket</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="margin: 20px auto;max-width: 600px; padding: 5px;">
+                <h1 class="text-center">No results found...</h1>
+                <a href="{% url 'landing:home' %}" class="btn btn-block btn-primary">Continue Shopping</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+    </script>
+{% endblock %}
