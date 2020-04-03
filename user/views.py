@@ -6,7 +6,8 @@ from django.http import HttpResponseRedirect
 from .models import Location
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .forms import NewUser,ClientLocation
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import NewUser,ClientLocation,UserEditProfileForm
 
 # Create your views here.
 
@@ -49,3 +50,34 @@ class UserProfileView(View):
     @method_decorator(login_required)
     def dispatch(self,request,*args,**kwargs):
         return render(request,self.template_name)
+    
+class UserEditProfileView(LoginRequiredMixin,View):
+    form_class1 = UserEditProfileForm
+    form_class2 = ClientLocation
+    template_name = 'user/edit_user_profile.html'
+    
+    def get(self,request,*args,**kwargs):
+        form = self.form_class1(instance = request.user)
+        loc = self.form_class2(instance = request.user.location)
+        context = {
+            "form":form,
+            "loc":loc,
+        }
+        
+        return render(request,self.template_name,context)
+    
+    def post(self,request,*args,**kwargs):
+        form = self.form_class1(request.POST,instance = request.user)
+        loc = self.form_class2(request.POST,instance = request.user.location)
+        context = {
+            "form":form,
+            "loc":loc,
+        }
+        if form.is_valid() and loc.is_valid():
+            form.save()
+            loc.save()
+            
+            return HttpResponseRedirect(reverse('user:profile'))
+        
+        return render(request,self.template_name,context)
+    

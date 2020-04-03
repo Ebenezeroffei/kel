@@ -65,3 +65,8 @@ class ItemsSearchView(generic.ListView):
             context['added_items'] = added_items
         print(context['results'])
         return context
+
+
+class CartListView(LoginRequiredMixin,generic.ListView):
+    model = Product
+    template_name = 'landing/cart.html'

@@ -1,3 +1,4 @@
 # General
 - Reduce the resolution of an image
+- Whenever you are not  a user and you want to go into a place for users you get redirected to the homepage
 

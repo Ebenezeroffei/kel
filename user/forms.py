@@ -46,3 +46,23 @@ class ClientLocation(forms.ModelForm):
             'mobile_number':"Please provide the school's vodafone number if possible.",
         }
         
+class UserEditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name','last_name','username','email']
+        widgets = {
+            'first_name': forms.TextInput(attrs = {
+                'class': 'form-control',
+            }),
+            'last_name': forms.TextInput(attrs = {
+                'class': 'form-control',
+            }),
+            'username': forms.TextInput(attrs = {
+                'class': 'form-control',
+            }),
+            'email': forms.TextInput(attrs = {
+                'required': 'true',
+                'class': 'form-control',
+                'type':'email',
+            }),
+        }

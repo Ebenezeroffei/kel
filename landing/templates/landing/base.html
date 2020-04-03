@@ -51,7 +51,7 @@
                 </li>
                 <!-- Basket Section -->
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style = "position: relative">
+                    <a class="nav-link" href="{% url 'landing:cart' %}" style = "position: relative">
                        <span style="position: absolute;left: 18px;top: 2px;" class="badge badge-light" id="basket-items">
                            {% if user.is_authenticated %}
                                {{user.usercartitems_set.count}}

@@ -5,6 +5,7 @@ app_name = 'landing'
 urlpatterns = [
     path('',landing_views.ProductListView.as_view(),name = 'home'),
     path('product/<int:pk>/',landing_views.ProductDetailView.as_view(),name = 'detail'),
+    path('cart/',landing_views.CartListView.as_view(),name = 'cart'),
     path('add-to-cart/',landing_views.AddItemsToCartView.as_view(),name = 'add_to_cart'),
     path('search/',landing_views.ItemsSearchView.as_view(),name = 'search'),
 ]

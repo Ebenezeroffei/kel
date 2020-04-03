@@ -9,10 +9,10 @@
     <div class="container" style="margin-top: 80px">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href="">Profile</a>
+                <a class="nav-link active" href="{% url 'user:profile' %}">Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">Your Cart <span class="badge badge-dark">{{ user.usercartitems_set.count }}</span></a>
+                <a class="nav-link" href="{% url 'landing:cart' %}">Your Cart <span class="badge badge-dark">{{ user.usercartitems_set.count }}</span></a>
             </li>
         </ul>
         <div style="text-align: center;margin-top: 20px;">
@@ -24,10 +24,11 @@
                 <h5 class = 'text-left'>Last Name :<span class = 'text-info'>{{ user.last_name }}</span></h5>
                 <h5 class = 'text-left'>Username :<span class = 'text-info'>{{ user.username }}</span></h5>
                 <h5 class = 'text-left'>Email :<span class = 'text-info'>{{ user.email }}</span></h5>
-                <h5 class = 'text-left'>Hall/Hostel :<span class = 'text-info'></span></h5>
-                <h5 class = 'text-left'>Room number :<span class = 'text-info'></span></h5>
+                <h5 class = 'text-left'>Hall/Hostel :<span class = 'text-info'>{{ user.location.hall_or_hostel }}</span></h5>
+                <h5 class = 'text-left'>Room number :<span class = 'text-info'>{{ user.location.room_number }}</span></h5>
+                <h5 class = 'text-left'>Mobile number :<span class = 'text-info'>{{ user.location.mobile_number }}</span></h5>
                 <h5 class = 'text-left'>No of items in cart :<span class = 'text-info'>{{ user.usercartitems_set.count }}</span></h5>
-                <a href="" class="btn btn-block btn-outline-dark btn-sm">Edit Profile</a>
+                <a href="{% url 'user:edit_profile' %}" class="btn btn-block btn-outline-dark btn-sm">Edit Profile</a>
             </div>
         </div>
     </div>

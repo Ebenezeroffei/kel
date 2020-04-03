@@ -1,0 +1,41 @@
+{% extends 'user/base.html' %}
+
+
+{% block head %}
+    <title>Edit Profile</title>
+{% endblock %}
+{% block content %}
+    <div class="card" style="max-width: 450px; margin:30px auto auto auto">
+        <div class="card-header text-center" style="background: gold;">Edit Profile</div>
+        <div class="card-body">
+            <form action="." method="post">
+               {% csrf_token %}
+               <div class="form-group">
+                    {{form.first_name}}
+                </div>
+                <div class="form-group">
+                    {{form.last_name}}
+                </div>
+                <div class="form-group">
+                    {{form.username}}
+                </div>
+                <div class="form-group">
+                    {{form.email}}
+                </div>
+                <div class="form-group">
+                    {{loc.hall_or_hostel}}
+                </div>
+                <div class="form-group">
+                    {{loc.room_number}}
+                </div>
+                <div class="form-group">
+                    {{loc.mobile_number}}
+                    <span class="form-text small muted">{{ loc.mobile_number.help_text }}</span>
+                </div>
+                <button class="btn btn-block btn-outline-dark" >Save Changes</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+{% endblock %}
