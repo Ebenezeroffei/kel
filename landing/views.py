@@ -70,3 +70,11 @@ class ItemsSearchView(generic.ListView):
 class CartListView(LoginRequiredMixin,generic.ListView):
     model = Product
     template_name = 'landing/cart.html'
+    context_object_name = 'cart_items'
+    
+    def get_queryset(self,*args,**kwargs):
+        queryset = [(pro,cart) for pro in Product.objects.all() for cart in self.request.user.usercartitems_set.all() if cart.item_name == pro.product_name]
+        print(queryset)
+        return queryset
+    
+    

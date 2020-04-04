@@ -1,11 +1,16 @@
 {% extends 'landing/base.html' %}
-
+{% load static %}
 
 {% block head %}
     <title>Cart</title>
+    <style>
+        p{
+            margin: auto;
+        }
+    </style>
 {% endblock %}
 {% block content %}
-    <div class="container" style="margin-top: 80px;">
+    <div class="container-fluid" style="margin-top: 80px;">
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'user:profile' %}">Profile</a>
@@ -14,7 +19,66 @@
                 <a class="nav-link active" href="{% url 'landing:cart' %}">Your Cart <span class = 'badge badge-dark'>{{ user.usercartitems_set.count }}</span></a>
             </li>
         </ul>
+        {% if cart_items %}
+            <div style="margin-top: 20px;" class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1">
+                {% for item,qua in cart_items %}
+                    <div class="col">
+                       <!-- Cart Item Section -->
+                        <div class="card mt-3" style="border-top: medium solid royalblue;">
+                            <div class="row row-cols-2 no-gutters">
+                                <!-- Cart Item Image -->
+                                <div class="col" style="border-right: thin solid lightgray">
+                                    <img style="width: 100%;height: 100%;" src="{{ item.product_img.url }}" alt="{{ item.product_name }} Image">
+                                </div>
+                                <!-- Cart Options -->
+                                <div class="col cart-options-container" style="padding: 3px;">
+                                   <!-- Product Name -->
+                                    <p class="lead">{{ item.product_name }}</p>
+                                    <!-- Product Price -->
+                                    <p style = 'font-size:14px;' class="small text-info price">
+                                        Price: <span style="font-size: 14px;" class="text-dark">GH&#8373;{{ item.product_price }}</span>
+                                    </p>
+                                    <!-- Quantity -->
+                                    <p style = 'font-size:14px;' class="small text-info">
+                                        Quantity:
+                                        <span style = 'font-size:14px;cursor:pointer;' style = 'font-size:14px;' class="badge badge-dark">+</span>
+                                        <span style="font-size: 14px;" class="text-dark quantity">{{ qua.item_quantity }}</span>
+                                        <span style = 'font-size:14px;cursor:pointer;'  class="badge badge-dark">-</span>
+                                    </p>
+                                    <!-- Sub Total -->
+                                    <p style = 'font-size:14px;' class="small text-info">
+                                        Sub-Total: <span style="font-size: 14px;" class="text-dark subtotal">GH&#8373;{{ item.product_price }}</span>
+                                    </p>
+                                    <button class="btn btn-danger btn-sm btn-block mt-3">
+                                        <img style="width: 16px;height: 16px;position: relative;top: -2px;" src="{% static 'landing/images/delete.png' %}" alt="Delete Item"> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="max-width: 600px;margin: auto">
+               <h1 class="text-center mt-5">Sorry you have no items in your cart..</h1>
+               <a href="{% url 'landing:home' %}" class="btn btn-info btn-block mt-5">Continue Shopping..</a> 
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 {% block javascript %}
+    <script>
+        // A function that calculates the subtotal
+        let calculateSutotal = (number,element) => {
+            let q = $(element).eq(number).find('.quantity').text()
+            let p = $(element).eq(number).find('.price').text()
+            let s = $(element).eq(number).find('.subtotal').text()
+            console.log(p)
+            console.log(s)
+            console.log(q)
+        }
+        $(".cart-options-container").each(function(n,e){
+            calculateSutotal(n,`.${e.classList["1"]}`);
+        })
+    </script>
 {% endblock %}
