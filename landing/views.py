@@ -2,7 +2,7 @@ from django.shortcuts import render,get_object_or_404
 from django.http import JsonResponse
 from django.views import View,generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Product
+from .models import Product,UserCartItems
 
 
 # Create your views here.
@@ -74,7 +74,42 @@ class CartListView(LoginRequiredMixin,generic.ListView):
     
     def get_queryset(self,*args,**kwargs):
         queryset = [(pro,cart) for pro in Product.objects.all() for cart in self.request.user.usercartitems_set.all() if cart.item_name == pro.product_name]
-        print(queryset)
         return queryset
     
+    
+class IncreaseOrDecreaseQuantityView(LoginRequiredMixin,View):
+    """ This class either increses or decreases the quantity of an item in a userscart """
+    def get(self,request,*args,**kwargs):
+        # Use the id of the item  to get the item
+        item_id = int(request.GET.get("item_id",None))
+        item = get_object_or_404(UserCartItems,id = item_id)
+        # Should we increase or decrease the quantity
+        operation = request.GET.get('operation',None)
+        if operation == 'add':
+            item.item_quantity += 1
+            item.save()
+        else:
+            item.item_quantity -= 1
+            item.save()
+        
+        data = {
+            'quantity': item.item_quantity,
+        }
+        
+        return JsonResponse(data)
+    
+class DeleteItemFromCartView(LoginRequiredMixin,View):
+    """ This class deletes an item from the users cart """
+    def get(self,request,*args,**kwargs):
+        # Get the item using the id
+        item_id = int(request.GET.get("item_id",None))
+        item = get_object_or_404(UserCartItems,id = item_id)
+        # Remove it from the user's cart
+        item.delete()
+        
+        data = {
+            'cart':request.user.usercartitems_set.count(),
+        }
+        
+        return JsonResponse(data)
     

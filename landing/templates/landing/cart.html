@@ -4,6 +4,9 @@
 {% block head %}
     <title>Cart</title>
     <style>
+        body{
+            user-select: none;
+        }
         p{
             margin: auto;
         }
@@ -16,7 +19,7 @@
                 <a class="nav-link" href="{% url 'user:profile' %}">Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'landing:cart' %}">Your Cart <span class = 'badge badge-dark'>{{ user.usercartitems_set.count }}</span></a>
+                <a class="nav-link active" href="{% url 'landing:cart' %}">Your Cart <span class = 'badge badge-dark' id="profile-basket-items">{{ user.usercartitems_set.count }}</span></a>
             </li>
         </ul>
         {% if cart_items %}
@@ -24,7 +27,7 @@
                 {% for item,qua in cart_items %}
                     <div class="col">
                        <!-- Cart Item Section -->
-                        <div class="card mt-3" style="border-top: medium solid royalblue;">
+                        <div class="card mt-3" style="border-top: medium solid royalblue;box-shadow: 0px 2px 5px rgba(0,0,0,.3)">
                             <div class="row row-cols-2 no-gutters">
                                 <!-- Cart Item Image -->
                                 <div class="col" style="border-right: thin solid lightgray">
@@ -35,21 +38,21 @@
                                    <!-- Product Name -->
                                     <p class="lead">{{ item.product_name }}</p>
                                     <!-- Product Price -->
-                                    <p style = 'font-size:14px;' class="small text-info price">
-                                        Price: <span style="font-size: 14px;" class="text-dark">GH&#8373;{{ item.product_price }}</span>
+                                    <p style = 'font-size:14px;' class="small text-info">
+                                        Price: <span style="font-size: 14px;" class="text-dark price">GH&#8373;{{ item.product_price }}</span>
                                     </p>
                                     <!-- Quantity -->
-                                    <p style = 'font-size:14px;' class="small text-info">
+                                    <p style = 'font-size:14px;' id="{{ qua.id }}" class="small text-info">
                                         Quantity:
-                                        <span style = 'font-size:14px;cursor:pointer;' style = 'font-size:14px;' class="badge badge-dark">+</span>
+                                        <span style = 'font-size:14px;cursor:pointer;' style = 'font-size:14px;' title="Increase" class="badge badge-dark add">+</span>
                                         <span style="font-size: 14px;" class="text-dark quantity">{{ qua.item_quantity }}</span>
-                                        <span style = 'font-size:14px;cursor:pointer;'  class="badge badge-dark">-</span>
+                                        <span style = 'font-size:14px;cursor:pointer;'  class="badge badge-dark sub" title="Decrease">-</span>
                                     </p>
                                     <!-- Sub Total -->
                                     <p style = 'font-size:14px;' class="small text-info">
                                         Sub-Total: <span style="font-size: 14px;" class="text-dark subtotal">GH&#8373;{{ item.product_price }}</span>
                                     </p>
-                                    <button class="btn btn-danger btn-sm btn-block mt-3">
+                                    <button class="btn btn-danger btn-sm btn-block mt-3 delete" id="{{ qua.id }}">
                                         <img style="width: 16px;height: 16px;position: relative;top: -2px;" src="{% static 'landing/images/delete.png' %}" alt="Delete Item"> Remove
                                     </button>
                                 </div>
@@ -69,16 +72,96 @@
 {% block javascript %}
     <script>
         // A function that calculates the subtotal
-        let calculateSutotal = (number,element) => {
-            let q = $(element).eq(number).find('.quantity').text()
-            let p = $(element).eq(number).find('.price').text()
-            let s = $(element).eq(number).find('.subtotal').text()
-            console.log(p)
-            console.log(s)
-            console.log(q)
+        let calculateSubtotal = (number,element) => {
+            // Get the quantity, price and subtotal
+            let quantity = Number($(element).eq(number).find('.quantity').text().trim());
+            let price = Number($(element).eq(number).find('.price').text().slice(3,).trim());
+            let subtotal = $(element).eq(number).find('.subtotal');
+            let product = quantity * price;
+            let product_list = String(product).split('.');
+            // Make some modifications to the data
+            if(product_list.length == 1){
+                product_list.push('00'); 
+            }
+            else{
+                if(product_list[1].length > 2){
+                    product_list[1] = product_list[1].slice(0,2);
+                }
+                else if(product_list[1].length == 1){
+                    product_list[1] = product_list[1] + '0';
+                }
+            }
+            // Change the subtotal
+            subtotal.text(product_list.join('.'));
         }
-        $(".cart-options-container").each(function(n,e){
-            calculateSutotal(n,`.${e.classList["1"]}`);
+        // Add the fuction to an event
+        $(".cart-options-container").each(function(number,element){
+            calculateSubtotal(number,`.${element.classList["1"]}`);
         })
+        
+        // A function that increases or decreses the quantity of an item
+        let increaseOrDecreaseQuantity = () => {
+            
+            //  A function that makes an ajax request to either increase or decreased the quantity
+            let ajaxRequestQuantityChange = (item_id,quantity,operation) => {
+                $.ajax({
+                    url: "{% url 'landing:quantity_change' %}",
+                    data: {
+                        'item_id': item_id,
+                        'operation': operation,
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        quantity.text(data['quantity'])
+                    },
+                })
+            }            
+            
+            // Increase quantity
+            $('.add').click(function(){
+                let parent = $(this).parent();
+                let item_id = parent.attr('id');
+                let item_quantity = parent.find('.quantity');
+                if(Number(item_quantity.text()) + 1 < 100){
+                    ajaxRequestQuantityChange(item_id,item_quantity,'add');
+                }
+            })
+            // Decrease quantity
+            $('.sub').click(function(){
+                let parent = $(this).parent();
+                let item_id = parent.attr('id');
+                let item_quantity = parent.find('.quantity');
+                if(Number(item_quantity.text()) - 1 > 0){
+                    ajaxRequestQuantityChange(item_id,item_quantity,'sub');
+                }
+
+            })
+        }
+        increaseOrDecreaseQuantity() // Invoke the function
+        
+        // A function that will removes an item from the user's cart
+        let removeItemFromCart = () => {
+            $('.delete').click(function(){
+                let item_id = $(this).attr('id');
+                let parent = $(this).parent().parent().parent().parent()
+                $.ajax({
+                    url: "{% url 'landing:delete_item' %}",
+                    data: {
+                        'item_id':item_id,
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        // Modify the number of items in the cart
+                        $('#basket-items').text(data['cart']);
+                        $('#profile-basket-items').text(data['cart']);
+                        // Remove the item in the frontend
+                        parent.slideUp(function(){
+                            $(this).remove();
+                        })
+                    },
+                })
+            })
+        }
+        removeItemFromCart() // Invoke the function
     </script>
 {% endblock %}
